@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediLensc AI - Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-blue-50 min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-lg">
+    <div class="text-center">
+      <!-- Logo -->
+      <img src="assets/logo.png" alt="MediLensc Logo" class="mx-auto mb-4 w-20 h-20 object-contain" />
+      
+      <!-- Title -->
+      <h1 class="text-3xl font-bold text-blue-700">MediLensc <span class="text-green-500">AI</span></h1>
+      <p class="text-sm text-gray-500">Login to your account</p>
+    </div>
+     <!-- Select Role -->
+  <div>
+    <label class="block text-sm font-medium text-gray-700">Select Role</label>
+    <select name="role" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500">
+      <option value="" disabled selected>Select your role</option>
+      <option value="admin">Admin</option>
+      <option value="doctor">Doctor</option>
+      <option value="patient">Patient</option>
+    </select>
+  </div>
+  
+    <form action="backend/login.php" method="POST" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email or Phone</label>
+        <input
+          type="text"
+          name="email"
+          required
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input
+          type="password"
+          name="password"
+          required
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+
+      <div class="flex items-center justify-between text-sm">
+        <a href="forgot-password.html" class="text-blue-600 hover:underline">Forgot password?</a>
+        <a href="register.html" class="text-green-600 hover:underline">Register</a>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold"
+      >
+        Login
+      </button>
+    </form>
+
+    <div class="text-center text-xs text-gray-400">&copy; 2025 MediLensc AI</div>
+  </div>
+</body>
+</html>
