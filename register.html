@@ -13,8 +13,21 @@
       <p class="text-sm text-gray-500">Create your account</p>
     </div>
 
+    <!-- Flash message from Flask (Jinja2 logic, works only in Flask app) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div>
+          {% for category, message in messages %}
+            <div class="p-2 text-sm text-center rounded-xl {{ 'bg-green-100 text-green-700' if category == 'success' else 'bg-red-100 text-red-700' }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <!-- Form starts here -->
-    <form action="https://medlenceai-production.up.railway.app/register" method="POST" class="space-y-4">
+    <form action="{{ url_for('register') }}" method="POST" class="space-y-4">
       <div>
         <label class="block text-sm font-medium text-gray-700">Full Name</label>
         <input type="text" name="fullname" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-green-500 focus:border-green-500" />
@@ -35,10 +48,11 @@
         <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
         <input type="password" name="confirm_password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-green-500 focus:border-green-500" />
       </div>
+
       <button type="submit" class="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold">Register</button>
 
       <p class="text-sm text-center text-gray-500">Already have an account? 
-        <a href="index.html" class="text-green-600 hover:underline">Login</a>
+        <a href="{{ url_for('login') }}" class="text-green-600 hover:underline">Login</a>
       </p>
     </form>
 
