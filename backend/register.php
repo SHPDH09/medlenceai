@@ -1,47 +1,40 @@
 <?php
-session_start();
-include 'db.php';         // Database connection
-require_once 'table.php'; // Table creation if not exists
+// DB credentials
+$host = 'mysql-e8883ac-raunakkumarjob-7886.i.aivencloud.com';
+$port = 12637;
+$username = 'avnadmin';
+$password = 'AVNS_rFSiPQG-ybjDAzwlU6n';
+$database = 'defaultdb';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name     = trim($_POST['fullname']);
-    $email    = trim($_POST['email']);
-    $phone    = trim($_POST['phone']);
-    $password = trim($_POST['password']);
-    $confirm  = trim($_POST['confirm_password']);
+// SSL connection
+$conn = mysqli_init();
+mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+mysqli_real_connect($conn, $host, $username, $password, $database, $port, NULL, MYSQLI_CLIENT_SSL);
 
-    // Check for empty fields
-    if (empty($name) || empty($email) || empty($phone) || empty($password) || empty($confirm)) {
-        die("Please fill all fields.");
-    }
-
-    // Confirm password match
-    if ($password !== $confirm) {
-        die("Passwords do not match.");
-    }
-
-    // Check if user already exists
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? OR phone = ?");
-    $stmt->bind_param("ss", $email, $phone);
-    $stmt->execute();
-    $stmt->store_result();
-    if ($stmt->num_rows > 0) {
-        die("Email or phone already registered.");
-    }
-
-    // Hash the password
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-    // Insert new user
-    $insert = $conn->prepare("INSERT INTO users (name, email, phone, password, role) VALUES (?, ?, ?, ?, ?)");
-    $default_role = 'user'; // Default role
-    $insert->bind_param("sssss", $name, $email, $phone, $hashed_password, $default_role);
-
-    if ($insert->execute()) {
-        header("Location: index.html?register=success");
-        exit();
-    } else {
-        die("Registration failed. Try again.");
-    }
+// Error check
+if (mysqli_connect_errno()) {
+    die("Database connection failed: " . mysqli_connect_error());
 }
+
+// Fetch form data
+$name = $_POST['name'];
+$email = $_POST['email'];
+$phone = $_POST['phone'];
+$pass = password_hash($_POST['password'], PASSWORD_BCRYPT);
+$role = 'user';
+
+// Insert into DB
+$query = "INSERT INTO users (name, email, phone, password, role) VALUES (?, ?, ?, ?, ?)";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "sssss", $name, $email, $phone, $pass, $role);
+
+if (mysqli_stmt_execute($stmt)) {
+    echo "✅ Registration successful!";
+} else {
+    echo "❌ Error: " . mysqli_error($conn);
+}
+
+// Cleanup
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
 ?>
