@@ -1,27 +1,30 @@
 <?php
 session_start();
 include 'db.php'; // DB connection
-require_once 'table.php'; // Create table if not exists
+require_once 'table.php'; // Table creation if needed
 
-// Fetch form values
-$email = $_POST['email'];
+// Fetch and sanitize form input
+$emailOrMobile = trim($_POST['email']);
 $password = $_POST['password'];
 
-// Validate input
-if (empty($email) || empty($password)) {
+// Check if fields are empty
+if (empty($emailOrMobile) || empty($password)) {
     echo "Please fill in all fields.";
     exit();
 }
 
-// Query to match user
-$sql = "SELECT * FROM users WHERE email='$email' OR mobile='$email' LIMIT 1";
-$result = mysqli_query($conn, $sql);
+// Prepare statement to prevent SQL injection
+$stmt = $conn->prepare("SELECT * FROM users WHERE email = ? OR mobile = ? LIMIT 1");
+$stmt->bind_param("ss", $emailOrMobile, $emailOrMobile);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if ($row = mysqli_fetch_assoc($result)) {
-    if ($row['password'] === $password) {
-        // Set session values
+if ($row = $result->fetch_assoc()) {
+    // Verify hashed password
+    if (password_verify($password, $row['password'])) {
+        // Set session
         $_SESSION['username'] = $row['name'];
-        $_SESSION['role'] = $row['role']; // Assume you have a 'role' column in your table
+        $_SESSION['role'] = $row['role'];
 
         // Redirect based on role
         if ($row['role'] === 'admin') {
@@ -29,7 +32,7 @@ if ($row = mysqli_fetch_assoc($result)) {
         } elseif ($row['role'] === 'user') {
             header("Location: user_dashboard.php");
         } else {
-            header("Location: dashboard.php"); // default fallback
+            header("Location: dashboard.php");
         }
         exit();
     } else {
@@ -39,5 +42,6 @@ if ($row = mysqli_fetch_assoc($result)) {
     echo "User not found.";
 }
 
-mysqli_close($conn);
+$stmt->close();
+$conn->close();
 ?>
