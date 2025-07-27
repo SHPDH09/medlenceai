@@ -1,24 +1,24 @@
 <?php
 require_once 'table.php';
+
 $host = 'mysql-e8883ac-raunakkumarjob-7886.i.aivencloud.com';
 $port = 12637;
 $username = 'avnadmin';
 $password = 'AVNS_rFSiPQG-ybjDAzwlU6n';
 $database = 'defaultdb';
 
-// Enable SSL connection
-$ssl = [
-    MYSQLI_OPT_SSL_VERIFY_SERVER_CERT => true
-];
-
-// Create connection
 $conn = mysqli_init();
-$conn->ssl_set(NULL, NULL, NULL, NULL, NULL);  // You can add cert paths here if needed
-$conn->real_connect($host, $username, $password, $database, $port, NULL, MYSQLI_CLIENT_SSL);
+if (!$conn) {
+    die("mysqli_init failed");
+}
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Optional: Set path to your SSL certs (if required by Aiven)
+// $conn->ssl_set('/path/to/client-key.pem', '/path/to/client-cert.pem', '/path/to/ca.pem', NULL, NULL);
+
+$conn->ssl_set(NULL, NULL, NULL, NULL, NULL);
+
+if (!$conn->real_connect($host, $username, $password, $database, $port, NULL, MYSQLI_CLIENT_SSL)) {
+    die("Connection failed: " . mysqli_connect_error());
 } else {
     // echo "Connected successfully!";
 }
