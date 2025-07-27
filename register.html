@@ -13,21 +13,7 @@
       <p class="text-sm text-gray-500">Create your account</p>
     </div>
 
-    <!-- Flash message from Flask (Jinja2 logic, works only in Flask app) -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="text-sm text-center font-medium p-3 rounded-xl mb-3 
-                  {% if category == 'error' %}
-                    bg-red-100 text-red-700 border border-red-300
-                  {% else %}
-                    bg-green-100 text-green-700 border border-green-300
-                  {% endif %}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+
 
 
 
