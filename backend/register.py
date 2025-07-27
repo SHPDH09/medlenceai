@@ -24,10 +24,12 @@ def register():
     if password != confirm:
         return "Passwords do not match", 400
 
+    role = "User"  # default role for every registration
+
     cursor = db.cursor()
     try:
-        sql = "INSERT INTO users (name, email, phone, password) VALUES (%s, %s, %s, %s)"
-        cursor.execute(sql, (name, email, phone, password))
+        sql = "INSERT INTO users (name, email, phone, password, role) VALUES (%s, %s, %s, %s, %s)"
+        cursor.execute(sql, (name, email, phone, password, role))
         db.commit()
         return "Registration successful", 200
     except Exception as e:
