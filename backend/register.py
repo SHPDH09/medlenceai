@@ -65,7 +65,8 @@ def register():
             cursor.close()
             conn.close()
 
-    return render_template("register.html")
+    return render_template("templates/register.html")
+
 
 
 @app.route("/success")
