@@ -4,7 +4,7 @@ import pymysql
 app = Flask(__name__)
 app.secret_key = 'e1f7c6a4b2f84331ad0c9ff84e20b7d1'
 
-# DB Connection
+# Database connection
 db = pymysql.connect(
     host="mysql-e8883ac-raunakkumarjob-7886.i.aivencloud.com",
     user="avnadmin",
@@ -30,9 +30,9 @@ def register():
         cursor = db.cursor()
         try:
             sql = "INSERT INTO users (name, email, phone, password, role) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(sql, (name, email, phone, password, "user"))  # default role = user
+            cursor.execute(sql, (name, email, phone, password, "user"))  # default role
             db.commit()
-            session['username'] = name  # store username in session
+            session['username'] = name
             return redirect("/success")
         except Exception as e:
             flash("Error: " + str(e), "error")
@@ -49,3 +49,5 @@ def success():
     <p style='text-align:center;'><a href='/login'>Click here to login</a></p>
     """
 
+if __name__ == "__main__":
+    app.run(debug=True)
