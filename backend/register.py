@@ -1,11 +1,10 @@
-
-from flask import Flask, render_template, request, redirect, flash, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session
 import pymysql
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)
+app.secret_key = 'e1f7c6a4b2f84331ad0c9ff84e20b7d1'  # Use a secure, randomly generated key in production
 
-app.secret_key = 'e1f7c6a4b2f84331ad0c9ff84e20b7d1'
 # Database connection
 def get_db_connection():
     return pymysql.connect(
@@ -27,12 +26,10 @@ def register():
         confirm_password = request.form.get("confirm_password")
 
         if not all([name, email, phone, password, confirm_password]):
-            flash("Please fill out all fields.", "error")
-            return redirect(url_for("register"))
+            return "All fields are required."
 
         if password != confirm_password:
-            flash("Passwords do not match.", "error")
-            return redirect(url_for("register"))
+            return "Passwords do not match."
 
         hashed_password = generate_password_hash(password)
 
@@ -43,8 +40,7 @@ def register():
             # Check if email already exists
             cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
             if cursor.fetchone():
-                flash("Email is already registered.", "error")
-                return redirect(url_for("register"))
+                return "Email already registered."
 
             insert_query = """
                 INSERT INTO users (name, email, phone, password, role)
@@ -54,20 +50,16 @@ def register():
             conn.commit()
 
             session["username"] = name
-            flash("Registration successful!", "success")
             return redirect(url_for("success"))
 
         except Exception as e:
-            flash(f"Database error: {str(e)}", "error")
-            return redirect(url_for("register"))
+            return f"Database error: {str(e)}"
 
         finally:
             cursor.close()
             conn.close()
 
-    return render_template("templates/register.html")
-
-
+    return render_template("register.html")  # Make sure this file is in the 'templates/' folder
 
 @app.route("/success")
 def success():
@@ -80,4 +72,3 @@ def success():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
