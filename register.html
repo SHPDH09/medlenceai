@@ -14,15 +14,21 @@
     </div>
 
     <!-- Flash message from Flask (Jinja2 logic, works only in Flask app) -->
-   {% with messages = get_flashed_messages(with_categories=true) %}
+{% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
-      <div class="alert alert-{{ category }} text-center p-3 mb-2 rounded" style="background-color: {% if category == 'error' %}#f8d7da{% else %}#d4edda{% endif %}; color: {% if category == 'error' %}#721c24{% else %}#155724{% endif %}; border: 1px solid {% if category == 'error' %}#f5c6cb{% else %}#c3e6cb{% endif %};">
+      <div class="text-sm text-center font-medium p-3 rounded-xl mb-3 
+                  {% if category == 'error' %}
+                    bg-red-100 text-red-700 border border-red-300
+                  {% else %}
+                    bg-green-100 text-green-700 border border-green-300
+                  {% endif %}">
         {{ message }}
       </div>
     {% endfor %}
   {% endif %}
 {% endwith %}
+
 
 
     <!-- Form starts here -->
